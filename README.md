@@ -1,36 +1,40 @@
 # GraviSync
 
-> 📱 Connect to your Antigravity AI session from anywhere by scanning a QR code. Monitor progress, approve actions, and manage your session remotely.
+Connect to your Antigravity AI session from anywhere by scanning a QR code. Monitor progress, approve actions, and manage your session remotely from any mobile device.
 
 ## Features
 
-- **🏠 Secured Local Connect** — Same Wi-Fi, no tunnel, HTTPS with self-signed certs.
-- **🌍 Secured Remote Connect** — Any network via Cloudflare Quick Tunnels (default, zero-config) or ngrok tunnel.
-- **📡 Real-time Session Mirroring** — See AI thinking, code generation, progress walkthroughs, and file edits live.
-- **⚡ Interactive Approvals** — Review implementation plans and approve sandboxed/unsandboxed command requests directly from your mobile device.
-- **🔐 Security First** — Single-use HMAC-signed tokens, zero hardcoded secrets, rate limiting, and strict security headers.
-- **🎨 Premium Mobile UI** — Dark glassmorphic design optimized for mobile web browsers with native markdown rendering.
+- **Secured Local Connect** — Same Wi-Fi, no tunnel, HTTPS with self-signed certificates.
+- **Secured Remote Connect** — Any network via Cloudflare Quick Tunnels (zero-config, default) or ngrok.
+- **Real-time Session Mirroring** — See AI reasoning, code generation, progress walkthroughs, and file edits live.
+- **Interactive Approvals** — Review implementation plans and approve or deny sandboxed command requests directly from your phone.
+- **Security First** — Single-use HMAC-signed tokens, zero hardcoded secrets, rate limiting, and strict security headers.
+- **Premium Mobile UI** — Dark glassmorphic design optimized for mobile browsers with native markdown rendering.
 
-## How it Works (Chrome DevTools Protocol - CDP)
+## How it Works
 
-GraviSync connects directly to your Antigravity IDE using the **Chrome DevTools Protocol (CDP)**. This allows the extension to capture the user interface snapshot, monitor execution state, and simulate click/input actions securely.
+GraviSync connects to your Antigravity IDE using the **Chrome DevTools Protocol (CDP)**. This allows the extension to capture the live UI snapshot, monitor execution state, and relay click and input actions securely to the running IDE instance.
 
-### Automatic Scanning
-By default, GraviSync will scan popular CDP debugging ports (`9222`, `9000`, `9001`, `9002`, `9003`) to locate the Antigravity instance.
+### Automatic Port Scanning
+
+By default, GraviSync scans the following CDP debugging ports to locate the Antigravity instance: `9222`, `9000`, `9001`, `9002`, `9003`.
 
 ### Enabling CDP in Antigravity IDE
 
-To allow GraviSync to connect, you must run the Antigravity IDE with remote debugging enabled. There are two ways to do this:
+Remote debugging must be enabled for GraviSync to connect. There are two methods:
 
 #### Method A: Relaunch via Command (Quickest)
-1. Open the command palette (`Ctrl+Shift+P` / `Cmd+Shift+P`).
-2. Search and run: **`Relaunch IDE with CDP Enabled`** (or `agRemoteConnect.relaunchWithCDP`).
-3. This will relaunch the IDE automatically with the debugging port open.
 
-#### Method B: Configure IDE Permanently (Recommended)
-To ensure the debugging port is always open whenever you start your IDE, add the remote debugging flag to your IDE launcher shortcut:
-* **Windows**: Right-click the Antigravity IDE shortcut → Properties → In the **Target** field, append ` --remote-debugging-port=9222` to the end of the path.
-* **Mac/Linux**: Launch the IDE from your terminal:
+1. Open the command palette (`Ctrl+Shift+P` on Windows/Linux, `Cmd+Shift+P` on macOS).
+2. Search for and run: **Relaunch IDE with CDP Enabled** (`agRemoteConnect.relaunchWithCDP`).
+3. The IDE will automatically relaunch with the debugging port open.
+
+#### Method B: Configure Permanently (Recommended)
+
+Add the remote debugging flag to your IDE launcher so it is always enabled on startup.
+
+- **Windows:** Right-click the Antigravity IDE shortcut, open Properties, and append `--remote-debugging-port=9222` to the end of the Target field.
+- **macOS / Linux:** Launch the IDE from a terminal:
   ```bash
   antigravity --remote-debugging-port=9222 .
   ```
@@ -39,33 +43,39 @@ To ensure the debugging port is always open whenever you start your IDE, add the
 
 ## Quick Start
 
-### 1. Install the Extension
-Search for **GraviSync** in the Extensions panel, or install from [Open VSX](https://open-vsx.org).
+### 1. Install
 
-### 2. Launch the Sync Server
-Click the **📱 GraviSync** icon in the Activity Bar, then click:
-- **Secured GraviSync Remote** — Recommended. Sets up a zero-config secure tunnel.
-- **Secured GraviSync Local** — Same Wi-Fi. Uses direct local IP (no tunnel needed).
+Search for **GraviSync** in the Extensions panel of Antigravity IDE, or install directly from [Open VSX](https://open-vsx.org/extension/gravisync/gravisync).
 
-### 3. Scan the QR Code
-Scan the QR code in the sidebar with your phone. You'll instantly see your AI session!
+### 2. Start a Connection
+
+Click the **GraviSync** icon in the Activity Bar, then select one of the connection modes:
+
+- **Secured GraviSync Remote** — Recommended. Creates a zero-config encrypted tunnel accessible from anywhere.
+- **Secured GraviSync Local** — Same Wi-Fi only. Uses your local IP directly with no tunnel required.
+
+### 3. Connect from Your Phone
+
+Scan the QR code shown in the sidebar. Your browser will open the GraviSync mobile interface, displaying your live AI session.
 
 ---
 
 ## Configuration
 
-Exposed as VS Code settings under the **GraviSync** category:
+All settings are available under the **GraviSync** category in VS Code / Antigravity IDE settings.
 
 | Setting | Default | Description |
 |:---|:---|:---|
 | `agRemoteConnect.serverPort` | `7392` | Local server port for mobile clients |
 | `agRemoteConnect.tunnelProvider` | `"cloudflare"` | Tunnel provider: `"cloudflare"` or `"ngrok"` |
-| `agRemoteConnect.ngrokAuthToken` | `""` | ngrok authentication token |
-| `agRemoteConnect.maxClients` | `5` | Max concurrent mobile connections |
-| `agRemoteConnect.sessionTimeoutHours` | `24` | Client session expiration limit |
-| `agRemoteConnect.snapshotIntervalMs` | `1000` | Snapshot polling interval |
-| `agRemoteConnect.cdpPorts` | `"9222,9000,9001,9002,9003"` | Ports to scan for Antigravity instance |
+| `agRemoteConnect.ngrokAuthToken` | `""` | ngrok authentication token (required when using ngrok) |
+| `agRemoteConnect.maxClients` | `5` | Maximum concurrent mobile connections |
+| `agRemoteConnect.sessionTimeoutHours` | `24` | Client session expiration in hours |
+| `agRemoteConnect.snapshotIntervalMs` | `1000` | Snapshot polling interval in milliseconds |
+| `agRemoteConnect.cdpPorts` | `"9222,9000,9001,9002,9003"` | Comma-separated CDP ports to scan |
+
+---
 
 ## License
 
-[MIT](LICENSE)
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/shreyash3087/GraviSync/blob/main/LICENSE) file for details.

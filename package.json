@@ -2,13 +2,17 @@
   "name": "gravisync",
   "displayName": "GraviSync",
   "description": "Connect to your Antigravity AI session from anywhere via QR code. Monitor progress, approve actions, and manage your session remotely.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "gravisync",
   "license": "MIT",
   "icon": "media/logo_without_bg.png",
+  "homepage": "http://gravisync.in/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shreyansh-builds/antigravity-remote-connect"
+    "url": "https://github.com/shreyash3087/GraviSync"
+  },
+  "bugs": {
+    "url": "https://github.com/shreyash3087/GraviSync/issues"
   },
   "engines": {
     "vscode": "^1.85.0"

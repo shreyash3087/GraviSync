@@ -1,0 +1,176 @@
+{
+  "name": "gravisync",
+  "displayName": "GraviSync",
+  "description": "Connect to your Antigravity AI session from anywhere via QR code. Monitor progress, approve actions, and manage your session remotely.",
+  "version": "0.1.1",
+  "publisher": "gravisync",
+  "license": "MIT",
+  "icon": "media/logo_without_bg.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shreyansh-builds/antigravity-remote-connect"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "antigravity",
+    "remote",
+    "mobile",
+    "qr-code",
+    "ai",
+    "session",
+    "monitor"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ag-remote-connect",
+          "title": "GraviSync",
+          "icon": "media/sidebar-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "ag-remote-connect": [
+        {
+          "type": "webview",
+          "id": "agRemoteConnect.sidebar",
+          "name": "GraviSync"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "agRemoteConnect.startLocal",
+        "title": "Start Secured Local Connect",
+        "category": "AG Remote"
+      },
+      {
+        "command": "agRemoteConnect.startRemote",
+        "title": "Start Secured Remote Connect",
+        "category": "AG Remote"
+      },
+      {
+        "command": "agRemoteConnect.stop",
+        "title": "Stop Remote Connect Server",
+        "category": "AG Remote"
+      },
+      {
+        "command": "agRemoteConnect.refreshQR",
+        "title": "Refresh QR Code",
+        "category": "AG Remote"
+      },
+      {
+        "command": "agRemoteConnect.disconnectAll",
+        "title": "Disconnect All Mobile Clients",
+        "category": "AG Remote"
+      },
+      {
+        "command": "agRemoteConnect.relaunchWithCDP",
+        "title": "Relaunch IDE with CDP Enabled",
+        "category": "AG Remote"
+      }
+    ],
+    "configuration": {
+      "title": "GraviSync",
+      "properties": {
+        "agRemoteConnect.serverPort": {
+          "type": "number",
+          "default": 7392,
+          "description": "Local server port for Remote Connect"
+        },
+        "agRemoteConnect.tunnelProvider": {
+          "type": "string",
+          "enum": ["cloudflare", "ngrok"],
+          "enumDescriptions": [
+            "Cloudflare Quick Tunnels (recommended) — no account or bandwidth limits needed. Requires the cloudflared binary (auto-downloaded if missing).",
+            "ngrok — requires an ngrok auth token. 1 GB/month free tier."
+          ],
+          "default": "cloudflare",
+          "description": "Tunnel provider for Remote Connect."
+        },
+        "agRemoteConnect.ngrokAuthToken": {
+          "type": "string",
+          "default": "",
+          "description": "ngrok authentication token (used when tunnelProvider is 'ngrok')."
+        },
+        "agRemoteConnect.ngrokAuthTokens": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Additional ngrok auth tokens for rotation. If the primary token hits the bandwidth limit, the extension automatically tries the next token in this list."
+        },
+        "agRemoteConnect.maxClients": {
+          "type": "number",
+          "default": 5,
+          "description": "Maximum concurrent mobile clients"
+        },
+        "agRemoteConnect.sessionTimeoutHours": {
+          "type": "number",
+          "default": 24,
+          "description": "Session timeout in hours"
+        },
+        "agRemoteConnect.snapshotIntervalMs": {
+          "type": "number",
+          "default": 1000,
+          "description": "Snapshot polling interval in milliseconds"
+        },
+        "agRemoteConnect.enableTotp": {
+          "type": "boolean",
+          "default": false,
+          "description": "Require TOTP verification for remote connections"
+        },
+        "agRemoteConnect.autoStart": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-start local server when IDE launches"
+        },
+        "agRemoteConnect.cdpPorts": {
+          "type": "string",
+          "default": "9222,9000,9001,9002,9003",
+          "description": "Comma-separated CDP ports to scan for Antigravity"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "npm run build:web && node esbuild.js --production",
+    "build:web": "cd web && npm install --prefer-offline && npm run build",
+    "watch": "node esbuild.js --watch",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package",
+    "publish:ovsx": "ovsx publish *.vsix"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cookie": "^0.6.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/vscode": "^1.85.0",
+    "@types/ws": "^8.5.10",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.0.0",
+    "ovsx": "^0.9.0",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "@ngrok/ngrok": "^1.4.0",
+    "compression": "^1.7.4",
+    "cookie": "^1.1.1",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.0",
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
+  }
+}

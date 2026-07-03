@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "watch",
+            "type": "shell",
+            "command": "node esbuild.js --watch",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                {
+                    "pattern": {
+                        "regexp": "^✘ \\[ERROR\\] (.+)$",
+                        "message": 1
+                    },
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": "^\\[watch\\]",
+                        "endsPattern": "^\\[watch\\] build (finished|failed)"
+                    }
+                }
+            ]
+        }
+    ]
+}

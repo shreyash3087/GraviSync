@@ -521,6 +521,34 @@ export class AppServer {
             }
         });
 
+// Helper to locate the most recently updated agent artifact by filename in the brain directory
+function findLatestArtifact(filename: string): string | null {
+    const brainDir = path.join(os.homedir(), '.gemini', 'antigravity-ide', 'brain');
+    if (!fs.existsSync(brainDir)) {
+        return null;
+    }
+
+    try {
+        const conversations = fs.readdirSync(brainDir);
+        let latestFile: string | null = null;
+        let latestMtime = 0;
+
+        for (const convId of conversations) {
+            const filePath = path.join(brainDir, convId, filename);
+            if (fs.existsSync(filePath)) {
+                const stat = fs.statSync(filePath);
+                if (stat.isFile() && stat.mtimeMs > latestMtime) {
+                    latestMtime = stat.mtimeMs;
+                    latestFile = filePath;
+                }
+            }
+        }
+        return latestFile;
+    } catch {
+        return null;
+    }
+}
+
         // Get file contents (for plan / script previewing in frontend)
         this.app.get('/api/file-content', this.requireAuth.bind(this), async (req: Request, res: Response) => {
             const filePathQuery = req.query.path as string;
@@ -546,18 +574,43 @@ export class AppServer {
                         res.status(400).json({ error: 'No workspace open' });
                         return;
                     }
-                    targetPath = path.resolve(workspaceRoot, targetPath);
+                    const localPath = path.resolve(workspaceRoot, targetPath);
+                    if (fs.existsSync(localPath)) {
+                        targetPath = localPath;
+                    } else {
+                        // Fallback to the latest artifact in the agent's brain directory if it doesn't exist in the workspace
+                        const latestArtifact = findLatestArtifact(targetPath);
+                        if (latestArtifact) {
+                            targetPath = latestArtifact;
+                        } else {
+                            targetPath = localPath; // Fallback to workspace path so it fails with 404
+                        }
+                    }
                 }
 
-                // Security check: ensure targetPath is within the workspace folder
+                // Security check: ensure targetPath is within the workspace folder OR the agent's brain directory
+                const agentBrainDir = path.join(os.homedir(), '.gemini', 'antigravity-ide', 'brain');
+                let isAllowed = false;
+
                 if (workspaceRoot) {
                     const relative = path.relative(workspaceRoot, targetPath);
                     const isSubdir = relative && !relative.startsWith('..') && !path.isAbsolute(relative);
                     const isSame = targetPath === workspaceRoot;
-                    if (!isSubdir && !isSame) {
-                        res.status(403).json({ error: 'Access denied: path is outside the workspace' });
-                        return;
+                    if (isSubdir || isSame) {
+                        isAllowed = true;
                     }
+                }
+
+                // Check if it is inside the agent's brain directory
+                const relativeToBrain = path.relative(agentBrainDir, targetPath);
+                const isInsideBrain = relativeToBrain && !relativeToBrain.startsWith('..') && !path.isAbsolute(relativeToBrain);
+                if (isInsideBrain) {
+                    isAllowed = true;
+                }
+
+                if (!isAllowed) {
+                    res.status(403).json({ error: 'Access denied: path is outside the workspace' });
+                    return;
                 }
 
                 // Read file

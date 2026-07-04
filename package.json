@@ -2,7 +2,7 @@
   "name": "gravisync",
   "displayName": "GraviSync",
   "description": "Connect to your Antigravity AI session from anywhere via QR code. Monitor progress, approve actions, and manage your session remotely.",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "publisher": "gravisync",
   "license": "MIT",
   "icon": "media/logo_without_bg.png",

@@ -163,17 +163,21 @@ export function SnapshotView({ snapshot, onAction, isInputFocused, onOpenFile }:
           let targetFile = ''
           let neatName = ''
           const lowerText = cardText.toLowerCase()
-          // Check for explicit files ending in common extensions first
-          const fileMatch = cardText.match(/[\w\-_\.\/]+\.(md|txt|json|js|ts|tsx|css|py|sh|yml|yaml|go|rs|c|cpp|h)\b/i)
-          if (fileMatch) {
-            targetFile = fileMatch[0]
-            neatName = targetFile.substring(targetFile.lastIndexOf('/') + 1)
-          } else if (lowerText.includes('implementation') && lowerText.includes('plan')) {
+          
+          // Check for special/known artifacts first so text contents (like mentioning "Next.js") don't hijack them
+          if (lowerText.includes('implementation') && lowerText.includes('plan')) {
             targetFile = 'implementation_plan.md'
             neatName = 'Implementation Plan'
           } else if (lowerText.includes('walkthrough')) {
             targetFile = 'walkthrough.md'
             neatName = 'Walkthrough'
+          } else {
+            // Check for explicit files ending in common extensions
+            const fileMatch = cardText.match(/[\w\-_\.\/]+\.(md|txt|json|js|ts|tsx|css|py|sh|yml|yaml|go|rs|c|cpp|h)\b/i)
+            if (fileMatch) {
+              targetFile = fileMatch[0]
+              neatName = targetFile.substring(targetFile.lastIndexOf('/') + 1)
+            }
           }
           if (targetFile) {
             e.preventDefault()

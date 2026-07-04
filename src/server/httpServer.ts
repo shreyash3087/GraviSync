@@ -201,9 +201,9 @@ export class AppServer {
             res.sendFile(swPath);
         });
 
-        // Serve the logo_without_bg PNG file as the favicon
+        // Serve the logo_colored PNG file as the favicon
         this.app.get('/favicon.ico', (_req: Request, res: Response) => {
-            const logoPath = path.join(this.extensionPath, 'media', 'logo_without_bg.png');
+            const logoPath = path.join(this.extensionPath, 'media', 'logo_colored.png');
             res.setHeader('Content-Type', 'image/png');
             res.setHeader('Cache-Control', 'public, max-age=86400');
             res.sendFile(logoPath);

@@ -150,6 +150,8 @@ function generateX509SelfSigned(privateKeyPem: string, publicKeyPem: string, ips
     // then wrap in PEM
 
     const serialNumber = crypto.randomBytes(8);
+    // Ensure serial number is positive and does not start with a redundant 0x00 byte
+    serialNumber[0] = (serialNumber[0] & 0x7f) | 0x01;
     const now = new Date();
     const oneYearLater = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
 
